@@ -1,3 +1,4 @@
+from datetime import date
 import lxml
 
 
@@ -11,31 +12,52 @@ class Person(Entity):
     """
     def __init__(self, element: lxml.etree._Element):
 
+        self.id = element.attrib['pid']
+
         ## PersonName
         pn = element.find('a2a:PersonName', namespaces=self.NAMESPACE)
         self.PersonName = PersonName(pn)
 
         # Gender
-        if element.find('a2a:Gender', namespaces=self.NAMESPACE):
+        if element.find('a2a:Gender', namespaces=self.NAMESPACE) is not None:
             self.Gender = element.find('a2a:Gender',
                                        namespaces=self.NAMESPACE).text
 
         # Residence
+        if element.find('a2a:Residence',
+                        namespaces=self.NAMESPACE) is not None:
+            self.Residence = Place(
+                element.find('a2a:Residence', namespaces=self.NAMESPACE))
 
         # Religion
+        if element.find('a2a:Religion', namespaces=self.NAMESPACE) is not None:
+            self.Religion = element.find('a2a:Religion',
+                                         namespaces=self.NAMESPACE).text
 
         # Origin
+        if element.find('a2a:Origin', namespaces=self.NAMESPACE) is not None:
+            self.Origin = Place(
+                element.find('a2a:Origin', namespaces=self.NAMESPACE))
 
         # Age
 
         # BirthDate
 
         # BirthPlace
+        if element.find('a2a:BirthPlace',
+                        namespaces=self.NAMESPACE) is not None:
+            self.BirthPlace = Place(
+                element.find('a2a:BirthPlace', namespaces=self.NAMESPACE))
 
         # Profession
+        if element.find('a2a:Profession',
+                        namespaces=self.NAMESPACE) is not None:
+            self.Profession = element.find('a2a:Profession',
+                                           namespaces=self.NAMESPACE).text
 
         # MaritalStatus
-        if element.find('a2a:MaritalStatus', namespaces=self.NAMESPACE):
+        if element.find('a2a:MaritalStatus',
+                        namespaces=self.NAMESPACE) is not None:
             self.Gender = element.find('a2a:Gender',
                                        namespaces=self.NAMESPACE).text
 
@@ -58,51 +80,166 @@ class PersonName(Entity):
             self.__setattr__(key, value)
 
 
-class Event:
+class Event(Entity):
     def __init__(self, element: lxml.etree._Element):
-        print(element)
+        self.id = element.attrib['eid']
+
+        # EventType
+        self.EventType = element.find('a2a:EventType',
+                                      namespaces=self.NAMESPACE).text
+
+        # EventDate
+
+        # EventPlace
+        if element.find('a2a:EventPlace',
+                        namespaces=self.NAMESPACE) is not None:
+            self.EventPlace = Place(
+                element.find('a2a:EventPlace', namespaces=self.NAMESPACE))
+
+        # EventReligion
+
+        # EventRemark
 
 
-class Object:
+class Object(Entity):
     def __init__(self, element: lxml.etree._Element):
-        print(element)
+        self.id = element.attrib['oid']
 
 
-class Source:
+class Source(Entity):
+    """
+    A2A:EAC, A2A:EAD, A2A:RecordGUID, A2A:RecordIdentifier, A2A:SourceAvailableScans, A2A:SourceDate,
+    A2A:SourceDigitalOriginal, A2A:SourceDigitalizationDate, A2A:SourceIndexDate, A2A:SourceLastChangeDate,
+    A2A:SourcePlace, A2A:SourceReference, A2A:SourceRemark, A2A:SourceType
+    """
     def __init__(self, element: lxml.etree._Element):
-        print(element)
+
+        # SourcePlace
+        self.SourcePlace = Place(
+            element.find('a2a:SourcePlace', namespaces=self.NAMESPACE))
+
+        # SourceIndexDate
+        self.IndexDateFrom = element.find('a2a:SourceIndexDate/a2a:From',
+                                          namespaces=self.NAMESPACE).text
+        self.IndexDateTo = element.find('a2a:SourceIndexDate/a2a:To',
+                                        namespaces=self.NAMESPACE).text
+
+        # SourceDate
+
+        # SourceType
+        self.SourceType = element.find('a2a:SourceType',
+                                       namespaces=self.NAMESPACE).text
+
+        # EAD
+
+        # EAC
+
+        # SourceReference
+        self.SourceReference = SourceReference(
+            element.find('a2a:SourceReference', namespaces=self.NAMESPACE))
+
+        # SourceAvailableScans
+
+        # SourceDigitalizationDate
+        if element.find('a2a:SourceDigitalizationDate',
+                        namespaces=self.NAMESPACE) is not None:
+            self.SourceDigitalizationDate = date.fromisoformat(
+                element.find('a2a:SourceDigitalizationDate',
+                             namespaces=self.NAMESPACE).text)
+
+        # SourceLastChangeDate
+        self.SourceLastChangeDate = date.fromisoformat(
+            element.find('a2a:SourceLastChangeDate',
+                         namespaces=self.NAMESPACE).text)
+
+        # SourceRetrievalDate
+        if element.find('a2a:SourceRetrievalDate',
+                        namespaces=self.NAMESPACE) is not None:
+            self.SourceRetrievalDate = date.fromisoformat(
+                element.find('a2a:SourceLastChangeDate',
+                             namespaces=self.NAMESPACE).text)
+
+        # SourceDigitalOriginal
+
+        # RecordIdentifier
+        if element.find('a2a:RecordIdentifier',
+                        namespaces=self.NAMESPACE) is not None:
+            self.identifier = element.find('a2a:RecordIdentifier',
+                                           namespaces=self.NAMESPACE).text
+
+        # RecordGUID
+        self.guid = element.find('a2a:RecordGUID',
+                                 namespaces=self.NAMESPACE).text
+
+        # SourceRemark
 
 
-class Relation:
+class Relation(Entity):
     def __init__(self, element: lxml.etree._Element):
-        print(element)
+        self.RelationType = element.find('a2a:RelationType',
+                                         namespaces=self.NAMESPACE).text
 
 
 class RelationEP(Relation):
     def __init__(self, element: lxml.etree._Element):
-        print(element)
+        super().__init__(element)
 
 
 class RelationPP(Relation):
     def __init__(self, element: lxml.etree._Element):
-        print(element)
+        super().__init__(element)
 
 
 class RelationPO(Relation):
     def __init__(self, element: lxml.etree._Element):
-        print(element)
+        super().__init__(element)
 
 
 class RelationP(Relation):
     def __init__(self, element: lxml.etree._Element):
-        print(element)
+        super().__init__(element)
 
 
 class RelationOO(Relation):
     def __init__(self, element: lxml.etree._Element):
-        print(element)
+        super().__init__(element)
 
 
 class RelationO(Relation):
     def __init__(self, element: lxml.etree._Element):
-        print(element)
+        super().__init__(element)
+
+
+class Place(Entity):
+    """
+    A2A:Block, A2A:Country, A2A:County, A2A:DescriptiveLocationIndicator, A2A:DetailPlaceRemark,
+    A2A:HouseName, A2A:HouseNumber, A2A:HouseNumberAddition, A2A:Latitude, A2A:Longitude,
+    A2A:Municipality, A2A:PartMunicipality, A2A:Place, A2A:Province, A2A:Quarter, A2A:State, A2A:Street
+    """
+    def __init__(self, element: lxml.etree._Element):
+
+        for child in element.getchildren():
+            key = child.tag.replace(f"{{{self.NAMESPACE['a2a']}}}", '')
+            value = child.text
+
+            self.__setattr__(key, value)
+
+
+class SourceReference(Entity):
+    def __init__(self, element: lxml.etree._Element):
+
+        for child in element.getchildren():
+            key = child.tag.replace(f"{{{self.NAMESPACE['a2a']}}}", '')
+            value = child.text
+
+            self.__setattr__(key, value)
+
+
+class Scan(Entity):
+    def __init__(self, element: lxml.etree._Element):
+
+        for child in element.getchildren():
+            key = child.tag.replace(f"{{{self.NAMESPACE['a2a']}}}", '')
+            value = child.text
+
+            self.__setattr__(key, value)

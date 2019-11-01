@@ -32,10 +32,10 @@ class Document:
             print("error")
 
         self._parsePersons()
-        # self._parseEvents()
-        # self._parseObjects()
-        # self._parseSource()
-        # self._parseRelations()
+        self._parseEvents()
+        self._parseObjects()
+        self._parseSource()
+        self._parseRelations()
 
         return self
 
@@ -62,11 +62,32 @@ class Document:
             self.tree.find('//a2a:Source', namespaces=self.NS))
 
     def _parseRelations(self):
+        """
+        Relation factory.
+        """
+
         elements = self.tree.xpath(
             "a2a:A2A/*[starts-with(name(), 'a2a:Relation')]",
             namespaces=self.NS)
-        self.relations = [A2A.Relation(el) for el in elements]
-        pass
+
+        relations = []
+        for el in elements:
+            if 'RelationEP' in el.tag:
+                relations.append(A2A.RelationEP(el))
+            if 'RelationPP' in el.tag:
+                relations.append(A2A.RelationPP(el))
+            if 'RelationPO' in el.tag:
+                relations.append(A2A.RelationPO(el))
+            if 'RelationEO' in el.tag:
+                relations.append(A2A.RelationEO(el))
+            if 'RelationP' in el.tag:
+                relations.append(A2A.RelationP(el))
+            if 'RelationOO' in el.tag:
+                relations.append(A2A.RelationOO(el))
+            if 'RelationO' in el.tag:
+                relations.append(A2A.RelationO(el))
+
+        self.relations = relations
 
 
 if __name__ == "__main__":
