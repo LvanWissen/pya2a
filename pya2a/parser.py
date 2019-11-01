@@ -3,10 +3,13 @@ from lxml import etree
 
 import A2A
 
+#from pya2a import NAMESPACE
+NAMESPACE = {"a2a": "http://Mindbus.nl/A2A"}
+
 
 class Document:
 
-    NS = {"a2a": "http://Mindbus.nl/A2A"}
+    NS = NAMESPACE
 
     def __init__(self, path=None):
 
@@ -29,10 +32,10 @@ class Document:
             print("error")
 
         self._parsePersons()
-        self._parseEvents()
-        self._parseObjects()
-        self._parseSource()
-        self._parseRelations()
+        # self._parseEvents()
+        # self._parseObjects()
+        # self._parseSource()
+        # self._parseRelations()
 
         return self
 
