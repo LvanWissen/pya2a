@@ -176,38 +176,76 @@ class Source(Entity):
 
 class Relation(Entity):
     def __init__(self, element: lxml.etree._Element):
+
         self.RelationType = element.find('a2a:RelationType',
                                          namespaces=self.NAMESPACE).text
+
+        # ExtendedRelationType
+        if element.find('a2a:ExtendedRelationType',
+                        namespaces=self.NAMESPACE) is not None:
+            self.ExtendedRelationType = element.find(
+                'a2a:ExtendedRelationType', namespaces=self.NAMESPACE).text
+
+        references = dict()
+
+    def __get__(self, value):
+        return self.value
 
 
 class RelationEP(Relation):
     def __init__(self, element: lxml.etree._Element):
         super().__init__(element)
 
+        self.person = element.find('a2a:PersonKeyRef',
+                                   namespaces=self.NAMESPACE).text
+        self.event = element.find('a2a:EventKeyRef',
+                                  namespaces=self.NAMESPACE).text
+
 
 class RelationPP(Relation):
     def __init__(self, element: lxml.etree._Element):
         super().__init__(element)
+
+        self.persons = [
+            i.text for i in element.findall('a2a:PersonKeyRef',
+                                            namespaces=self.NAMESPACE)
+        ]
 
 
 class RelationPO(Relation):
     def __init__(self, element: lxml.etree._Element):
         super().__init__(element)
 
+        self.person = element.find('a2a:PersonKeyRef',
+                                   namespaces=self.NAMESPACE).text
+        self.object = element.find('a2a:ObjectKeyRef',
+                                   namespaces=self.NAMESPACE).text
+
 
 class RelationP(Relation):
     def __init__(self, element: lxml.etree._Element):
         super().__init__(element)
+
+        self.person = element.find('a2a:PersonKeyRef',
+                                   namespaces=self.NAMESPACE).text
 
 
 class RelationOO(Relation):
     def __init__(self, element: lxml.etree._Element):
         super().__init__(element)
 
+        self.objects = [
+            i.text for i in element.findall('a2a:ObjectKeyRef',
+                                            namespaces=self.NAMESPACE)
+        ]
+
 
 class RelationO(Relation):
     def __init__(self, element: lxml.etree._Element):
         super().__init__(element)
+
+        self.object = element.find('a2a:ObjectKeyRef',
+                                   namespaces=self.NAMESPACE).text
 
 
 class Place(Entity):
