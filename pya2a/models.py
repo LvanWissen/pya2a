@@ -1,5 +1,8 @@
 from datetime import date
-import lxml
+
+import lxml.etree
+
+from utils import parseRemark
 
 
 class Entity:
@@ -19,49 +22,54 @@ class Person(Entity):
         self.PersonName = PersonName(pn)
 
         # Gender
-        if element.find('a2a:Gender', namespaces=self.NAMESPACE) is not None:
-            self.Gender = element.find('a2a:Gender',
-                                       namespaces=self.NAMESPACE).text
+        if (el := element.find('a2a:Gender',
+                               namespaces=self.NAMESPACE)) is not None:
+            self.Gender = el.text
 
         # Residence
-        if element.find('a2a:Residence',
-                        namespaces=self.NAMESPACE) is not None:
-            self.Residence = Place(
-                element.find('a2a:Residence', namespaces=self.NAMESPACE))
+        if (el := element.find('a2a:Residence',
+                               namespaces=self.NAMESPACE)) is not None:
+            self.Residence = Place(el)
 
         # Religion
-        if element.find('a2a:Religion', namespaces=self.NAMESPACE) is not None:
-            self.Religion = element.find('a2a:Religion',
-                                         namespaces=self.NAMESPACE).text
+        if (el := element.find('a2a:Religion',
+                               namespaces=self.NAMESPACE)) is not None:
+            self.Religion = el.text
 
         # Origin
-        if element.find('a2a:Origin', namespaces=self.NAMESPACE) is not None:
-            self.Origin = Place(
-                element.find('a2a:Origin', namespaces=self.NAMESPACE))
+        if (el := element.find('a2a:Origin',
+                               namespaces=self.NAMESPACE)) is not None:
+            self.Origin = Place(el)
 
         # Age
 
         # BirthDate
 
         # BirthPlace
-        if element.find('a2a:BirthPlace',
-                        namespaces=self.NAMESPACE) is not None:
-            self.BirthPlace = Place(
-                element.find('a2a:BirthPlace', namespaces=self.NAMESPACE))
+        if (el := element.find('a2a:BirthPlace',
+                               namespaces=self.NAMESPACE)) is not None:
+            self.BirthPlace = Place(el)
 
         # Profession
-        if element.find('a2a:Profession',
-                        namespaces=self.NAMESPACE) is not None:
-            self.Profession = element.find('a2a:Profession',
-                                           namespaces=self.NAMESPACE).text
+        if (el := element.find('a2a:Profession',
+                               namespaces=self.NAMESPACE)) is not None:
+            self.Profession = el.text
 
         # MaritalStatus
-        if element.find('a2a:MaritalStatus',
-                        namespaces=self.NAMESPACE) is not None:
-            self.Gender = element.find('a2a:Gender',
-                                       namespaces=self.NAMESPACE).text
+        if (el := element.find('a2a:MaritalStatus',
+                               namespaces=self.NAMESPACE)) is not None:
+            self.Gender = el.text
 
         # PersonRemark
+        if (els := element.findall('a2a:PersonRemark',
+                                   namespaces=self.NAMESPACE)) is not None:
+            remarks = []
+            for el in els:
+                remarkType = el.attrib['Key']
+                remark = el.find('a2a:Value', namespaces=self.NAMESPACE).text
+
+                remarks.append((remarkType, parseRemark(remark)))
+            self.Remarks = dict(remarks)  # This only works if 'Key' is unique
 
 
 class PersonName(Entity):
@@ -91,14 +99,22 @@ class Event(Entity):
         # EventDate
 
         # EventPlace
-        if element.find('a2a:EventPlace',
-                        namespaces=self.NAMESPACE) is not None:
-            self.EventPlace = Place(
-                element.find('a2a:EventPlace', namespaces=self.NAMESPACE))
+        if (el := element.find('a2a:EventPlace',
+                               namespaces=self.NAMESPACE)) is not None:
+            self.EventPlace = Place(el)
 
         # EventReligion
 
         # EventRemark
+        if (els := element.findall('a2a:EventRemark',
+                                   namespaces=self.NAMESPACE)) is not None:
+            remarks = []
+            for el in els:
+                remarkType = el.attrib['Key']
+                remark = el.find('a2a:Value', namespaces=self.NAMESPACE).text
+
+                remarks.append((remarkType, parseRemark(remark)))
+            self.Remarks = dict(remarks)
 
 
 class Object(Entity):
@@ -139,13 +155,17 @@ class Source(Entity):
             element.find('a2a:SourceReference', namespaces=self.NAMESPACE))
 
         # SourceAvailableScans
+        if (el := element.find('a2a:SourceAvailableScans',
+                               namespaces=self.NAMESPACE)) is not None:
+            self.scans = [
+                Scan(i) for i in element.findall('a2a:SourceAvailableScans',
+                                                 namespaces=self.NAMESPACE)
+            ]
 
         # SourceDigitalizationDate
-        if element.find('a2a:SourceDigitalizationDate',
-                        namespaces=self.NAMESPACE) is not None:
-            self.SourceDigitalizationDate = date.fromisoformat(
-                element.find('a2a:SourceDigitalizationDate',
-                             namespaces=self.NAMESPACE).text)
+        if (el := element.find('a2a:SourceDigitalizationDate',
+                               namespaces=self.NAMESPACE)) is not None:
+            self.SourceDigitalizationDate = date.fromisoformat(el.text)
 
         # SourceLastChangeDate
         self.SourceLastChangeDate = date.fromisoformat(
@@ -153,25 +173,31 @@ class Source(Entity):
                          namespaces=self.NAMESPACE).text)
 
         # SourceRetrievalDate
-        if element.find('a2a:SourceRetrievalDate',
-                        namespaces=self.NAMESPACE) is not None:
-            self.SourceRetrievalDate = date.fromisoformat(
-                element.find('a2a:SourceLastChangeDate',
-                             namespaces=self.NAMESPACE).text)
+        if (el := element.find('a2a:SourceRetrievalDate',
+                               namespaces=self.NAMESPACE)) is not None:
+            self.SourceRetrievalDate = date.fromisoformat(el.text)
 
         # SourceDigitalOriginal
 
         # RecordIdentifier
-        if element.find('a2a:RecordIdentifier',
-                        namespaces=self.NAMESPACE) is not None:
-            self.identifier = element.find('a2a:RecordIdentifier',
-                                           namespaces=self.NAMESPACE).text
+        if (el := element.find('a2a:RecordIdentifier',
+                               namespaces=self.NAMESPACE)) is not None:
+            self.identifier = el.text
 
         # RecordGUID
         self.guid = element.find('a2a:RecordGUID',
                                  namespaces=self.NAMESPACE).text
 
         # SourceRemark
+        if (els := element.findall('a2a:SourceRemark',
+                                   namespaces=self.NAMESPACE)) is not None:
+            remarks = []
+            for el in els:
+                remarkType = el.attrib['Key']
+                remark = el.find('a2a:Value', namespaces=self.NAMESPACE).text
+
+                remarks.append((remarkType, parseRemark(remark)))
+            self.Remarks = dict(remarks)
 
 
 class Relation(Entity):
@@ -181,12 +207,9 @@ class Relation(Entity):
                                          namespaces=self.NAMESPACE).text
 
         # ExtendedRelationType
-        if element.find('a2a:ExtendedRelationType',
-                        namespaces=self.NAMESPACE) is not None:
-            self.ExtendedRelationType = element.find(
-                'a2a:ExtendedRelationType', namespaces=self.NAMESPACE).text
-
-        references = dict()
+        if (el := element.find('a2a:ExtendedRelationType',
+                               namespaces=self.NAMESPACE)) is not None:
+            self.ExtendedRelationType = el.text
 
     def __get__(self, value):
         return self.value
@@ -274,6 +297,16 @@ class SourceReference(Entity):
 
 
 class Scan(Entity):
+    def __init__(self, element: lxml.etree._Element):
+
+        for child in element.getchildren():
+            key = child.tag.replace(f"{{{self.NAMESPACE['a2a']}}}", '')
+            value = child.text
+
+            self.__setattr__(key, value)
+
+
+class Date(Entity):
     def __init__(self, element: lxml.etree._Element):
 
         for child in element.getchildren():

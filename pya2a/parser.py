@@ -3,7 +3,7 @@ from collections import defaultdict
 
 from lxml import etree
 
-import A2A
+import models
 
 #from pya2a import NAMESPACE
 NAMESPACE = {"a2a": "http://Mindbus.nl/A2A"}
@@ -17,7 +17,7 @@ class Document:
 
         self.references = defaultdict(dict)
 
-        if os.path.exists(path):
+        if path and os.path.exists(path):
             self._tree = etree.parse(path)
 
             self.parse()
@@ -50,7 +50,7 @@ class Document:
     def _parsePersons(self):
 
         elements = self._tree.findall('//a2a:Person', namespaces=self.NS)
-        self.persons = [A2A.Person(el)
+        self.persons = [models.Person(el)
                         for el in elements]  # or should this be a generator?
 
         for p in self.persons:
@@ -59,7 +59,7 @@ class Document:
     def _parseEvents(self):
 
         elements = self._tree.findall('//a2a:Event', namespaces=self.NS)
-        self.events = [A2A.Event(el)
+        self.events = [models.Event(el)
                        for el in elements]  # or should this be a generator?
 
         for e in self.events:
@@ -68,14 +68,14 @@ class Document:
     def _parseObjects(self):
 
         elements = self._tree.findall('//a2a:Object', namespaces=self.NS)
-        self.objects = [A2A.Object(el)
+        self.objects = [models.Object(el)
                         for el in elements]  # or should this be a generator?
 
         for o in self.objects:
             self.references['object'][o.id] = o
 
     def _parseSource(self):
-        self.source = A2A.Source(
+        self.source = models.Source(
             self._tree.find('//a2a:Source', namespaces=self.NS))
 
     def _parseRelations(self):
@@ -84,25 +84,27 @@ class Document:
         """
 
         elements = self._tree.xpath(
-            "a2a:A2A/*[starts-with(name(), 'a2a:Relation')]",
+            "//a2a:A2A/*[starts-with(name(), 'a2a:Relation')]",
             namespaces=self.NS)
 
         relations = []
         for el in elements:
             if 'RelationEP' in el.tag:
-                relation = A2A.RelationEP(el)
+                relation = models.RelationEP(el)
             elif 'RelationPP' in el.tag:
-                relation = A2A.RelationPP(el)
+                relation = models.RelationPP(el)
             elif 'RelationPO' in el.tag:
-                relation = A2A.RelationPO(el)
+                relation = models.RelationPO(el)
             elif 'RelationEO' in el.tag:
-                relation = A2A.RelationEO(el)
+                relation = models.RelationEO(el)
             elif 'RelationP' in el.tag:
-                relation = A2A.RelationP(el)
+                relation = models.RelationP(el)
             elif 'RelationOO' in el.tag:
-                relation = A2A.RelationOO(el)
+                relation = models.RelationOO(el)
             elif 'RelationO' in el.tag:
-                relation = A2A.RelationO(el)
+                relation = models.RelationO(el)
+            else:
+                relation = None
 
             # And make references to instantiated objects
             if hasattr(relation, 'person'):
@@ -112,11 +114,11 @@ class Document:
             if hasattr(relation, 'object'):
                 relation.object = self.references['object'][relation.object]
             if hasattr(relation, 'persons'):
-                relation.objects = tuple(
+                relation.objects = (
                     self.references['person'][relation.persons[0]],
                     self.references['person'][relation.persons[1]])
             if hasattr(relation, 'objects'):
-                relation.objects = tuple(
+                relation.objects = (
                     self.references['object'][relation.objects[0]],
                     self.references['object'][relation.objects[1]])
 
@@ -132,9 +134,9 @@ class Document:
 
 if __name__ == "__main__":
     d = Document(
-        '/home/leon/Documents/Golden_Agents/A2A/pya2a/pya2a/test/NL-UtHUA_A338180_000021.a2a.xml'
+        '/home/leon/Documents/Golden_Agents/A2A/pya2a/pya2a/test/saa_9d6d21e1-c748-666d-e053-b784100a1840.xml'
     )
 
     for i in d:
-        print(vars(i))
+        print(i, vars(i))
         print()
