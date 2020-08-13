@@ -108,19 +108,33 @@ class Document:
 
             # And make references to instantiated objects
             if hasattr(relation, 'person'):
-                relation.person = self.references['person'][relation.person]
+                person = self.references['person'][relation.person]
+                relation.person = person
+                person.relations.append(relation)
+
             if hasattr(relation, 'event'):
-                relation.event = self.references['event'][relation.event]
+                event = self.references['event'][relation.event]
+                relation.event = event
+                event.relations.append(relation)
+
             if hasattr(relation, 'object'):
-                relation.object = self.references['object'][relation.object]
+                obj = self.references['object'][relation.object]
+                relation.object = obj
+                obj.relations.append(relation)
+
             if hasattr(relation, 'persons'):
-                relation.objects = (
-                    self.references['person'][relation.persons[0]],
-                    self.references['person'][relation.persons[1]])
+                p1 = self.references['person'][relation.persons[0]]
+                p2 = self.references['person'][relation.persons[1]]
+                relation.persons = (p1, p2)
+                p1.relations.append(relation)
+                p2.relations.append(relation)
+
             if hasattr(relation, 'objects'):
-                relation.objects = (
-                    self.references['object'][relation.objects[0]],
-                    self.references['object'][relation.objects[1]])
+                o1 = self.references['object'][relation.objects[0]]
+                o2 = self.references['object'][relation.objects[1]]
+                relation.objects = (o1, o2)
+                o1.relations.append(relation)
+                o2.relations.append(relation)
 
             relations.append(relation)
 

@@ -16,6 +16,7 @@ class Person(Entity):
     def __init__(self, element: lxml.etree._Element):
 
         self.id = element.attrib['pid']
+        self.relations = []
 
         ## PersonName
         pn = element.find('a2a:PersonName', namespaces=self.NAMESPACE)
@@ -91,6 +92,7 @@ class PersonName(Entity):
 class Event(Entity):
     def __init__(self, element: lxml.etree._Element):
         self.id = element.attrib['eid']
+        self.relations = []
 
         # EventType
         self.EventType = element.find('a2a:EventType',
@@ -120,6 +122,7 @@ class Event(Entity):
 class Object(Entity):
     def __init__(self, element: lxml.etree._Element):
         self.id = element.attrib['oid']
+        self.relations = []
 
 
 class Source(Entity):
