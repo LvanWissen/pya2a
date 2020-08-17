@@ -1,4 +1,5 @@
-from datetime import date
+import datetime
+import dateutil.parser
 
 import lxml.etree
 
@@ -45,6 +46,9 @@ class Person(Entity):
         # Age
 
         # BirthDate
+        if (el := element.find('a2a:BirthDate',
+                               namespaces=self.NAMESPACE)) is not None:
+            self.BirthDate = Date(el)
 
         # BirthPlace
         if (el := element.find('a2a:BirthPlace',
@@ -99,6 +103,9 @@ class Event(Entity):
                                       namespaces=self.NAMESPACE).text
 
         # EventDate
+        if (el := element.find('a2a:EventDate',
+                               namespaces=self.NAMESPACE)) is not None:
+            self.EventDate = Date(el)
 
         # EventPlace
         if (el := element.find('a2a:EventPlace',
@@ -138,12 +145,18 @@ class Source(Entity):
             element.find('a2a:SourcePlace', namespaces=self.NAMESPACE))
 
         # SourceIndexDate
-        self.IndexDateFrom = element.find('a2a:SourceIndexDate/a2a:From',
-                                          namespaces=self.NAMESPACE).text
-        self.IndexDateTo = element.find('a2a:SourceIndexDate/a2a:To',
-                                        namespaces=self.NAMESPACE).text
+        date_from = element.find('a2a:SourceIndexDate/a2a:From',
+                                 namespaces=self.NAMESPACE).text
+        self.IndexDateFrom = dateutil.parser.parse(date_from)
+
+        date_to = element.find('a2a:SourceIndexDate/a2a:To',
+                               namespaces=self.NAMESPACE).text
+        self.IndexDateTo = dateutil.parser.parse(date_to)
 
         # SourceDate
+        if (el := element.find('a2a:SourceDate',
+                               namespaces=self.NAMESPACE)) is not None:
+            self.SourceDate = Date(el)
 
         # SourceType
         self.SourceType = element.find('a2a:SourceType',
@@ -168,17 +181,18 @@ class Source(Entity):
         # SourceDigitalizationDate
         if (el := element.find('a2a:SourceDigitalizationDate',
                                namespaces=self.NAMESPACE)) is not None:
-            self.SourceDigitalizationDate = date.fromisoformat(el.text)
+            self.SourceDigitalizationDate = datetime.date.fromisoformat(
+                el.text)
 
         # SourceLastChangeDate
-        self.SourceLastChangeDate = date.fromisoformat(
+        self.SourceLastChangeDate = datetime.date.fromisoformat(
             element.find('a2a:SourceLastChangeDate',
                          namespaces=self.NAMESPACE).text)
 
         # SourceRetrievalDate
         if (el := element.find('a2a:SourceRetrievalDate',
                                namespaces=self.NAMESPACE)) is not None:
-            self.SourceRetrievalDate = date.fromisoformat(el.text)
+            self.SourceRetrievalDate = datetime.date.fromisoformat(el.text)
 
         # SourceDigitalOriginal
 
@@ -312,8 +326,28 @@ class Scan(Entity):
 class Date(Entity):
     def __init__(self, element: lxml.etree._Element):
 
+        # Calendar="" IndexDateTime=""
+        if 'Calendar' in element.attrib:
+            self.calendar = element.attrib['Calendar']
+        if 'IndexDateTime' in element.attrib:
+            self.IndexDateTime = element.attrib['IndexDateTime']
+
         for child in element.getchildren():
             key = child.tag.replace(f"{{{self.NAMESPACE['a2a']}}}", '')
             value = child.text
 
             self.__setattr__(key, value)
+
+        self.date = self._toISO()
+
+    def _toISO(self):
+
+        arguments = {
+            k.lower(): int(v)
+            for k, v in vars(self).items()
+            if k.lower() in ('year', 'month', 'day', 'hour', 'minute')
+        }
+
+        date = datetime.datetime(**arguments)
+
+        return date
