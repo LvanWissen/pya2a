@@ -348,6 +348,11 @@ class Date(Entity):
             if k.lower() in ('year', 'month', 'day', 'hour', 'minute')
         }
 
-        date = datetime.datetime(**arguments)
+        if {'year', 'month', 'day'}.issubset(arguments):
 
-        return date
+            date = datetime.datetime(**arguments)
+
+            return date
+
+        else:
+            return None
