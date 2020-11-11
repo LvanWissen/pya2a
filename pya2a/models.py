@@ -3,7 +3,7 @@ import dateutil.parser
 
 import lxml.etree
 
-from utils import parseRemark
+from pya2a.utils import parseRemark
 
 
 class Entity:
@@ -76,12 +76,15 @@ class Person(Entity):
                 remarks.append((remarkType, parseRemark(remark)))
             self.Remarks = dict(remarks)  # This only works if 'Key' is unique
 
+    def __getattr__(self, attr):
+        return None
+
 
 class PersonName(Entity):
     """
-    A2A:PersonNameAlias, A2A:PersonNameFamilyName, A2A:PersonNameFirstName, 
-    A2A:PersonNameInitials, A2A:PersonNameLastName, A2A:PersonNameLiteral, 
-    A2A:PersonNameNickName, A2A:PersonNamePatronym, A2A:PersonNamePrefixLastName, 
+    A2A:PersonNameAlias, A2A:PersonNameFamilyName, A2A:PersonNameFirstName,
+    A2A:PersonNameInitials, A2A:PersonNameLastName, A2A:PersonNameLiteral,
+    A2A:PersonNameNickName, A2A:PersonNamePatronym, A2A:PersonNamePrefixLastName,
     A2A:PersonNameRemark, A2A:PersonNameTitle, A2A:PersonNameTitleOfNobility
     """
     def __init__(self, element: lxml.etree._Element):
@@ -91,6 +94,16 @@ class PersonName(Entity):
             value = child.text
 
             self.__setattr__(key, value)
+
+    def __iter__(self):
+        for i in vars(self):
+            if i.startswith('PersonName'):
+                yield self.__getattribute__(i)
+            else:
+                continue
+
+    def __getattr__(self, attr):
+        return None
 
 
 class Event(Entity):
@@ -124,6 +137,9 @@ class Event(Entity):
 
                 remarks.append((remarkType, parseRemark(remark)))
             self.Remarks = dict(remarks)
+
+    def __getattr__(self, attr):
+        return None
 
 
 class Object(Entity):
@@ -174,9 +190,11 @@ class Source(Entity):
         if (el := element.find('a2a:SourceAvailableScans',
                                namespaces=self.NAMESPACE)) is not None:
             self.scans = [
-                Scan(i) for i in element.findall('a2a:SourceAvailableScans',
-                                                 namespaces=self.NAMESPACE)
+                Scan(i)
+                for i in el.findall('a2a:Scan', namespaces=self.NAMESPACE)
             ]
+        else:
+            self.scans = []
 
         # SourceDigitalizationDate
         if (el := element.find('a2a:SourceDigitalizationDate',
@@ -202,8 +220,8 @@ class Source(Entity):
             self.identifier = el.text
 
         # RecordGUID
-        self.guid = element.find('a2a:RecordGUID',
-                                 namespaces=self.NAMESPACE).text
+        guid = element.find('a2a:RecordGUID', namespaces=self.NAMESPACE).text
+        self.guid = guid.replace('{', '').replace('}', '')  # m$
 
         # SourceRemark
         if (els := element.findall('a2a:SourceRemark',
@@ -350,9 +368,13 @@ class Date(Entity):
 
         if {'year', 'month', 'day'}.issubset(arguments):
 
-            date = datetime.datetime(**arguments)
+            date = datetime.date(**arguments)
 
+            #return date.isoformat()
             return date
 
         else:
             return None
+
+    def __str__(self):
+        return self._toISO()

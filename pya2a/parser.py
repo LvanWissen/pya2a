@@ -1,7 +1,9 @@
 import os
-import lxml.etree
+# import lxml.etree
 
-import models
+import xml.etree.ElementTree as ET
+
+import pya2a.models as models
 
 #from pya2a import NAMESPACE
 NAMESPACE = {"a2a": "http://Mindbus.nl/A2A"}
@@ -15,12 +17,15 @@ class DocumentCollection:
 
         self.documents = []
 
-        if path and os.path.exists(path):
-            self._tree = lxml.etree.parse(path)
+        if path and os.path.exists(path) and not os.path.isdir(path):
+            self._tree = ET.parse(path)
         elif treeElement is not None:
             self._tree = treeElement
+        else:
+            print("PATH", path)
+            raise OSError
 
-        records = self._tree.xpath('//a2a:A2A', namespaces=self.NS)
+        records = self._tree.findall('.//a2a:A2A', namespaces=self.NS)
         if (nRecords := len(records)) == 1:
             #TODO: warning/error?
             self.__class__ = Document
@@ -43,10 +48,10 @@ class Document:
 
         self._refs = {'person': {}, 'event': {}, 'object': {}}
 
-        if path and os.path.exists(path):
-            self._tree = lxml.etree.parse(path)
+        if path and os.path.exists(path) and not os.path.isdir(path):
+            self._tree = ET.parse(path)
 
-            records = self._tree.xpath('//a2a:A2A', namespaces=self.NS)
+            records = self._tree.findall('.//a2a:A2A', namespaces=self.NS)
             if (nRecords := len(records)) > 1:
                 #TODO: warning/error?
                 self.__class__ = DocumentCollection
@@ -120,8 +125,7 @@ class Document:
         Relation factory.
         """
 
-        elements = self._elem.xpath("*[starts-with(name(), 'a2a:Relation')]",
-                                    namespaces=self.NS)
+        elements = [i for i in self._elem.iter() if 'Relation' in i.tag]
 
         relations = []
         for el in elements:
@@ -186,25 +190,26 @@ class Document:
 
 
 if __name__ == "__main__":
-    # d = Document(
-    #     '/home/leon/Documents/Golden_Agents/A2A/pya2a/pya2a/test/saa_9d6d21e1-c748-666d-e053-b784100a1840.xml'
-    # )
+
+    d = Document(
+        # '/home/leon/Documents/Golden_Agents/A2A/pya2a/pya2a/test/saa_9d6d21e1-c748-666d-e053-b784100a1840.xml'
+        '/home/leon/Documents/Golden_Agents/A2A/pya2a/pya2a/test/saa_01cbd894-13ac-4799-b864-e3f4cba76f17.xml'
+    )
 
     # d = Document(
     #     '/home/leon/Documents/Golden_Agents/A2A/pya2a/pya2a/test/saa_list.xml')
 
-    # for i in d:
-    #     print(i, vars(i))
-    #     print()
+    for s in d.source.scans:
+        print(vars(s))
 
-    documents = []
-    folder = '/media/leon/My Book/index/4018f750-f13f-6123-229f-0e86942219bb'
+    # documents = []
+    # folder = '/media/leon/My Book/index/4018f750-f13f-6123-229f-0e86942219bb'
 
-    for n, f in enumerate(os.listdir(folder), 1):
+    # for n, f in enumerate(os.listdir(folder), 1):
 
-        filepath = os.path.join(folder, f)
+    #     filepath = os.path.join(folder, f)
 
-        documentCollection = DocumentCollection(filepath)
+    #     documentCollection = DocumentCollection(filepath)
 
-        for d in documentCollection.documents:
-            print(vars(d))
+    #     for d in documentCollection.documents:
+    #         print(vars(d))
