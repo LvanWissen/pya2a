@@ -182,8 +182,10 @@ class Document:
 
     def getEntities(self):
 
-        return self.persons + self.events + self.objects + \
+        entities = self.persons + self.events + self.objects + \
             self.relations + [self.source]
+
+        return [i for i in entities if i]
 
     def toRDF(self):
         pass
@@ -191,16 +193,17 @@ class Document:
 
 if __name__ == "__main__":
 
-    d = Document(
+    dc = DocumentCollection(
         # '/home/leon/Documents/Golden_Agents/A2A/pya2a/pya2a/test/saa_9d6d21e1-c748-666d-e053-b784100a1840.xml'
-        '/home/leon/Documents/Golden_Agents/A2A/pya2a/pya2a/test/saa_01cbd894-13ac-4799-b864-e3f4cba76f17.xml'
+        '/home/leon/Documents/Golden_Agents/saaA2A/data/a2a/SAA-ID-002_SAA_Index_op_doopregisters/000000001.xml'
     )
 
     # d = Document(
     #     '/home/leon/Documents/Golden_Agents/A2A/pya2a/pya2a/test/saa_list.xml')
 
-    for s in d.source.scans:
-        print(vars(s))
+    for d in dc:
+        for e in d.events:
+            print(vars(e))
 
     # documents = []
     # folder = '/media/leon/My Book/index/4018f750-f13f-6123-229f-0e86942219bb'
@@ -213,3 +216,4 @@ if __name__ == "__main__":
 
     #     for d in documentCollection.documents:
     #         print(vars(d))
+

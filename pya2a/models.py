@@ -36,7 +36,8 @@ class Person(Entity):
         # Religion
         if (el := element.find('a2a:Religion',
                                namespaces=self.NAMESPACE)) is not None:
-            self.Religion = el.text
+            self.Religion = el.find('a2a:ReligionLiteral',
+                                    namespaces=self.NAMESPACE).text
 
         # Origin
         if (el := element.find('a2a:Origin',
@@ -126,6 +127,10 @@ class Event(Entity):
             self.EventPlace = Place(el)
 
         # EventReligion
+        if (el := element.find('a2a:EventReligion',
+                               namespaces=self.NAMESPACE)) is not None:
+            self.EventReligion = el.find('a2a:ReligionLiteral',
+                                         namespaces=self.NAMESPACE).text
 
         # EventRemark
         if (els := element.findall('a2a:EventRemark',
