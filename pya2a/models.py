@@ -75,7 +75,7 @@ class Person(Entity):
                 remark = el.find('a2a:Value', namespaces=self.NAMESPACE).text
 
                 remarks.append((remarkType, parseRemark(remark)))
-            self.Remarks = dict(remarks)  # This only works if 'Key' is unique
+            self.Remarks = dict(remarks)
 
     def __getattr__(self, attr):
         return None

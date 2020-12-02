@@ -4,56 +4,29 @@ from collections import defaultdict, Counter
 
 def parseRemark(remark: str):
 
-    parsedRemarks = remarkParser(remark)
+    items = []
 
-    if len(parsedRemarks) == 1 and parsedRemarks[0][0] == 'Other':
-        return parsedRemarks[0][1]
-    else:
+    lines = [i.strip() for i in remark.split('\n')]
+    for line in lines:
+        if ': ' in line:
+            key, values = line.split(': ', 1)
 
-        return defaultdictify(parsedRemarks)
+            if ': ' in values:
+                values = [
+                    tuple(i.strip().split(': ')) for i in values.split('; ')
+                ]
+                values = dict(values)
 
+            items.append((key, values))
+        elif line:
+            items.append(('Other', line))
 
-def defaultdictify(d):
+    data = defaultdict(list)
+    for k, v in items:
+        data[k].append(v)
 
-    if type(d) == list:
-        data = defaultdict(list)
+    for k, v in data.items():
+        if len(v) == 1:
+            data[k] = data[k][0]
 
-        keys, _ = zip(*d)
-        keyCounts = Counter(keys)
-
-        for key, value in d:
-
-            if keyCounts[key] == 1:
-                data[key] = value
-            else:
-                data[key].append(value)
-
-        d = data
-
-    if type(d) == dict:
-        return {k: defaultdictify(v) for k, v in d.items()}
-    else:
-        return d
-
-
-def remarkParser(remark: str):
-
-    remark = remark.strip()
-
-    fields = re.split(r'\n|; ', remark)
-
-    parsedRemarks = []
-    for f in fields:
-        if ': ' in f:
-            _, key, _, value = re.split(r'(^.*?)(: )', f)
-
-            if ': ' in value:
-                value = remarkParser(value)
-
-            f = (key, value)
-        else:
-            f = ('Other', f)
-
-        parsedRemarks.append(f)
-
-    return parsedRemarks
+    return data
