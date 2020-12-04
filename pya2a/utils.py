@@ -15,7 +15,6 @@ def parseRemark(remark: str):
                 values = [
                     tuple(i.strip().split(': ', 1)) for i in values.split('; ')
                 ]
-                print(values)
                 values = dict(values)
 
             items.append((key, values))
