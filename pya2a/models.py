@@ -237,7 +237,22 @@ class Source(Entity):
                 remark = el.find('a2a:Value', namespaces=self.NAMESPACE).text
 
                 remarks.append((remarkType, parseRemark(remark)))
-            self.Remarks = dict(remarks)
+
+            remarkKeys = [i[0] for i in remarks]
+            duplicateKeys = set(k for k in remarkKeys
+                                if remarkKeys.count(k) > 1)
+            duplicateKeys.add('filename')  # hardcode
+
+            remarkDict = dict(
+                [i for i in remarks if i[0] not in duplicateKeys])
+
+            # add the duplicate keys with list value
+            for key in duplicateKeys:
+                remarkDict[key] = [
+                    i[1]['Other'] for i in remarks if i[0] == key
+                ]
+
+            self.Remarks = remarkDict
 
 
 class Relation(Entity):
@@ -371,12 +386,25 @@ class Date(Entity):
             if k.lower() in ('year', 'month', 'day', 'hour', 'minute')
         }
 
-        if {'year', 'month', 'day'}.issubset(arguments):
+        if {'year', 'month', 'day', 'hour'}.issubset(arguments):
+
+            date = datetime.datetime(**arguments)
+
+            #return date.isoformat()
+            return date
+
+        elif {'year', 'month', 'day'}.issubset(arguments):
 
             date = datetime.date(**arguments)
 
             #return date.isoformat()
             return date
+
+        elif {'year', 'month'}.issubset(arguments):
+            return f"{arguments['year']}-{arguments['month']}"
+
+        elif {'year'}.issubset(arguments):
+            return f"{arguments['year']}"
 
         else:
             return None
