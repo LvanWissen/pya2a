@@ -1,6 +1,4 @@
 import os
-# import lxml.etree
-
 import xml.etree.ElementTree as ET
 
 import pya2a.models as models

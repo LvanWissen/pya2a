@@ -1,7 +1,7 @@
 import datetime
 import dateutil.parser
 
-import lxml.etree
+import xml.etree.ElementTree
 
 from pya2a.utils import parseRemark
 
@@ -14,7 +14,7 @@ class Person(Entity):
     """
 
     """
-    def __init__(self, element: lxml.etree._Element):
+    def __init__(self, element: xml.etree.ElementTree.Element):
 
         self.id = element.attrib['pid']
         self.relations = []
@@ -88,9 +88,9 @@ class PersonName(Entity):
     A2A:PersonNameNickName, A2A:PersonNamePatronym, A2A:PersonNamePrefixLastName,
     A2A:PersonNameRemark, A2A:PersonNameTitle, A2A:PersonNameTitleOfNobility
     """
-    def __init__(self, element: lxml.etree._Element):
+    def __init__(self, element: xml.etree.ElementTree.Element):
 
-        for child in element.getchildren():
+        for child in element:
             key = child.tag.replace(f"{{{self.NAMESPACE['a2a']}}}", '')
             value = child.text
 
@@ -108,7 +108,7 @@ class PersonName(Entity):
 
 
 class Event(Entity):
-    def __init__(self, element: lxml.etree._Element):
+    def __init__(self, element: xml.etree.ElementTree.Element):
         self.id = element.attrib['eid']
         self.relations = []
 
@@ -148,7 +148,7 @@ class Event(Entity):
 
 
 class Object(Entity):
-    def __init__(self, element: lxml.etree._Element):
+    def __init__(self, element: xml.etree.ElementTree.Element):
         self.id = element.attrib['oid']
         self.relations = []
 
@@ -159,7 +159,7 @@ class Source(Entity):
     A2A:SourceDigitalOriginal, A2A:SourceDigitalizationDate, A2A:SourceIndexDate, A2A:SourceLastChangeDate,
     A2A:SourcePlace, A2A:SourceReference, A2A:SourceRemark, A2A:SourceType
     """
-    def __init__(self, element: lxml.etree._Element):
+    def __init__(self, element: xml.etree.ElementTree.Element):
 
         # SourcePlace
         self.SourcePlace = Place(
@@ -256,7 +256,7 @@ class Source(Entity):
 
 
 class Relation(Entity):
-    def __init__(self, element: lxml.etree._Element):
+    def __init__(self, element: xml.etree.ElementTree.Element):
 
         self.RelationType = element.find('a2a:RelationType',
                                          namespaces=self.NAMESPACE).text
@@ -271,7 +271,7 @@ class Relation(Entity):
 
 
 class RelationEP(Relation):
-    def __init__(self, element: lxml.etree._Element):
+    def __init__(self, element: xml.etree.ElementTree.Element):
         super().__init__(element)
 
         self.person = element.find('a2a:PersonKeyRef',
@@ -281,7 +281,7 @@ class RelationEP(Relation):
 
 
 class RelationPP(Relation):
-    def __init__(self, element: lxml.etree._Element):
+    def __init__(self, element: xml.etree.ElementTree.Element):
         super().__init__(element)
 
         self.persons = [
@@ -291,7 +291,7 @@ class RelationPP(Relation):
 
 
 class RelationPO(Relation):
-    def __init__(self, element: lxml.etree._Element):
+    def __init__(self, element: xml.etree.ElementTree.Element):
         super().__init__(element)
 
         self.person = element.find('a2a:PersonKeyRef',
@@ -301,7 +301,7 @@ class RelationPO(Relation):
 
 
 class RelationP(Relation):
-    def __init__(self, element: lxml.etree._Element):
+    def __init__(self, element: xml.etree.ElementTree.Element):
         super().__init__(element)
 
         self.person = element.find('a2a:PersonKeyRef',
@@ -309,7 +309,7 @@ class RelationP(Relation):
 
 
 class RelationOO(Relation):
-    def __init__(self, element: lxml.etree._Element):
+    def __init__(self, element: xml.etree.ElementTree.Element):
         super().__init__(element)
 
         self.objects = [
@@ -319,7 +319,7 @@ class RelationOO(Relation):
 
 
 class RelationO(Relation):
-    def __init__(self, element: lxml.etree._Element):
+    def __init__(self, element: xml.etree.ElementTree.Element):
         super().__init__(element)
 
         self.object = element.find('a2a:ObjectKeyRef',
@@ -332,9 +332,9 @@ class Place(Entity):
     A2A:HouseName, A2A:HouseNumber, A2A:HouseNumberAddition, A2A:Latitude, A2A:Longitude,
     A2A:Municipality, A2A:PartMunicipality, A2A:Place, A2A:Province, A2A:Quarter, A2A:State, A2A:Street
     """
-    def __init__(self, element: lxml.etree._Element):
+    def __init__(self, element: xml.etree.ElementTree.Element):
 
-        for child in element.getchildren():
+        for child in element:
             key = child.tag.replace(f"{{{self.NAMESPACE['a2a']}}}", '')
             value = child.text
 
@@ -342,9 +342,9 @@ class Place(Entity):
 
 
 class SourceReference(Entity):
-    def __init__(self, element: lxml.etree._Element):
+    def __init__(self, element: xml.etree.ElementTree.Element):
 
-        for child in element.getchildren():
+        for child in element:
             key = child.tag.replace(f"{{{self.NAMESPACE['a2a']}}}", '')
             value = child.text
 
@@ -352,9 +352,9 @@ class SourceReference(Entity):
 
 
 class Scan(Entity):
-    def __init__(self, element: lxml.etree._Element):
+    def __init__(self, element: xml.etree.ElementTree.Element):
 
-        for child in element.getchildren():
+        for child in element:
             key = child.tag.replace(f"{{{self.NAMESPACE['a2a']}}}", '')
             value = child.text
 
@@ -362,7 +362,7 @@ class Scan(Entity):
 
 
 class Date(Entity):
-    def __init__(self, element: lxml.etree._Element):
+    def __init__(self, element: xml.etree.ElementTree.Element):
 
         # Calendar="" IndexDateTime=""
         if 'Calendar' in element.attrib:
@@ -370,7 +370,7 @@ class Date(Entity):
         if 'IndexDateTime' in element.attrib:
             self.IndexDateTime = element.attrib['IndexDateTime']
 
-        for child in element.getchildren():
+        for child in element:
             key = child.tag.replace(f"{{{self.NAMESPACE['a2a']}}}", '')
             value = child.text
 
