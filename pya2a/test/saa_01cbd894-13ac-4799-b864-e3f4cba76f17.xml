@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+  <responseDate>2021-07-26T14:46:12Z</responseDate>
+  <request metadataPrefix="oai_a2a" verb="GetRecord" identifier="01cbd894-13ac-4799-b864-e3f4cba76f17">https://webservices.picturae.com/a2a/a66155dd-f750-40be-9ddd-244d72248fa3/</request>
+  <GetRecord>
+    <record>
+      <header>
+        <identifier>01cbd894-13ac-4799-b864-e3f4cba76f17</identifier>
+        <datestamp>2020-12-11T05:58:25Z</datestamp>
+      </header>
+      <metadata>
+        <a2a:A2A xmlns:a2a="http://Mindbus.nl/A2A" Version="1.7">
+          <a2a:Person pid="Person:961f6b15-e7fc-53f7-e053-b784100aa83b">
+            <a2a:PersonName>
+              <a2a:PersonNameFirstName>Augustinis</a2a:PersonNameFirstName>
+              <a2a:PersonNameLastName>Plefe</a2a:PersonNameLastName>
+            </a2a:PersonName>
+            <a2a:Gender>Onbekend</a2a:Gender>
+            <a2a:PersonRemark Key="diversen">
+              <a2a:Value>
+Naamsvariant: Pluij, Augustijn [de]</a2a:Value>
+            </a2a:PersonRemark>
+          </a2a:Person>
+          <a2a:Person pid="Person:961f6b15-e7fd-53f7-e053-b784100aa83b">
+            <a2a:PersonName>
+              <a2a:PersonNameFirstName>Grietje</a2a:PersonNameFirstName>
+              <a2a:PersonNameLastName>Barents</a2a:PersonNameLastName>
+            </a2a:PersonName>
+            <a2a:Gender>Onbekend</a2a:Gender>
+            <a2a:PersonRemark Key="diversen">
+              <a2a:Value>
+Eerdere man: Ede, Juliaan [van den]</a2a:Value>
+            </a2a:PersonRemark>
+          </a2a:Person>
+          <a2a:Event eid="Event1">
+            <a2a:EventType>other: Ondertrouw</a2a:EventType>
+            <a2a:EventDate>
+              <a2a:Year>1655</a2a:Year>
+              <a2a:Month>6</a2a:Month>
+              <a2a:Day>10</a2a:Day>
+            </a2a:EventDate>
+          </a2a:Event>
+          <a2a:RelationEP>
+            <a2a:PersonKeyRef>Person:961f6b15-e7fc-53f7-e053-b784100aa83b</a2a:PersonKeyRef>
+            <a2a:EventKeyRef>Event1</a2a:EventKeyRef>
+            <a2a:RelationType>Bruidegom</a2a:RelationType>
+          </a2a:RelationEP>
+          <a2a:RelationEP>
+            <a2a:PersonKeyRef>Person:961f6b15-e7fd-53f7-e053-b784100aa83b</a2a:PersonKeyRef>
+            <a2a:EventKeyRef>Event1</a2a:EventKeyRef>
+            <a2a:RelationType>Bruid</a2a:RelationType>
+          </a2a:RelationEP>
+          <a2a:Source>
+            <a2a:SourcePlace>
+              <a2a:Place>Amsterdam</a2a:Place>
+            </a2a:SourcePlace>
+            <a2a:SourceIndexDate>
+              <a2a:From>1655-06-10</a2a:From>
+              <a2a:To>1655-06-10</a2a:To>
+            </a2a:SourceIndexDate>
+            <a2a:SourceDate>
+              <a2a:Year>1655</a2a:Year>
+              <a2a:Month>6</a2a:Month>
+              <a2a:Day>10</a2a:Day>
+            </a2a:SourceDate>
+            <a2a:SourceType>other: Ondertrouwregister</a2a:SourceType>
+            <a2a:SourceReference>
+              <a2a:Place>Amsterdam</a2a:Place>
+              <a2a:InstitutionName>Stadsarchief Amsterdam</a2a:InstitutionName>
+              <a2a:Archive>5001</a2a:Archive>
+              <a2a:Collection>Deel: 474, Periode: 1654-1655</a2a:Collection>
+              <a2a:Book>Ondertrouwregister</a2a:Book>
+              <a2a:Folio>p.410</a2a:Folio>
+              <a2a:RegistryNumber>474</a2a:RegistryNumber>
+            </a2a:SourceReference>
+            <a2a:SourceAvailableScans>
+              <a2a:Scan>
+                <a2a:OrderSequenceNumber>1</a2a:OrderSequenceNumber>
+                <a2a:Uri>https://images.memorix.nl/ams/thumb/640x480/4a1aedf1-68e0-5e7f-3330-aff482fb963d.jpg</a2a:Uri>
+                <a2a:UriViewer>https://archief.amsterdam/indexen/deeds/01cbd894-13ac-4799-b864-e3f4cba76f17</a2a:UriViewer>
+                <a2a:UriPreview>https://images.memorix.nl/ams/thumb/250x250/4a1aedf1-68e0-5e7f-3330-aff482fb963d.jpg</a2a:UriPreview>
+              </a2a:Scan>
+            </a2a:SourceAvailableScans>
+            <a2a:SourceLastChangeDate>2020-10-14</a2a:SourceLastChangeDate>
+            <a2a:SourceDigitalOriginal>https://archief.amsterdam/indexen/deeds/01cbd894-13ac-4799-b864-e3f4cba76f17</a2a:SourceDigitalOriginal>
+            <a2a:RecordGUID>{01cbd894-13ac-4799-b864-e3f4cba76f17}</a2a:RecordGUID>
+            <a2a:SourceRemark Key="Opmerking">
+              <a2a:Value>Opmerking: Huwelijksintekeningen van de KERK.
+Aantal pagina's: 3
+Volgnummer: 3
+&lt;a href="https://archief.amsterdam/archief/5001/474" target="_blank" title="https://archief.amsterdam/archief/5001/474"&gt;https://archief.amsterdam/archief/5001/474&lt;/a&gt;
+</a2a:Value>
+            </a2a:SourceRemark>
+            <a2a:SourceRemark Key="AkteSoort">
+              <a2a:Value>Ondertrouw</a2a:Value>
+            </a2a:SourceRemark>
+            <a2a:SourceRemark Key="filename">
+              <a2a:Value>A24815000210</a2a:Value>
+            </a2a:SourceRemark>
+          </a2a:Source>
+        </a2a:A2A>
+      </metadata>
+    </record>
+  </GetRecord>
+</OAI-PMH>
+
