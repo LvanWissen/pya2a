@@ -1,9 +1,9 @@
 import datetime
 
-from pya2a import DocumentCollection, Document
+from . import DocumentCollection, Document
 
 # run from tldr
-OTR = 'test/saa_01cbd894-13ac-4799-b864-e3f4cba76f17.xml'
+OTR = 'pya2a/test/saa_01cbd894-13ac-4799-b864-e3f4cba76f17.xml'
 
 
 def test_parser_otr(document=OTR):
