@@ -13,7 +13,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/lvanwissen/pya2a",
     packages=setuptools.find_packages(),
-    install_requires=['dateutil'],
+    install_requires=['python-dateutil'],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",

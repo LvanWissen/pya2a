@@ -1,5 +1,4 @@
-import re
-from collections import defaultdict, Counter
+from collections import defaultdict
 
 
 def parseRemark(remark: str):

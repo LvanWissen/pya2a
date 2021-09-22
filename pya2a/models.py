@@ -1,6 +1,7 @@
 import datetime
 import dateutil.parser
 
+import xml
 import xml.etree.ElementTree
 
 from pya2a.utils import parseRemark

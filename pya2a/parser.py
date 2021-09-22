@@ -1,4 +1,5 @@
 import os
+import errno
 import xml.etree.ElementTree as ET
 
 import pya2a.models as models
@@ -61,6 +62,10 @@ class Document:
         elif treeElement is not None:
             self._elem = treeElement
             self.parse()
+
+        else:
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT),
+                                    path)
 
     def __iter__(self):
         for i in self.getEntities():
